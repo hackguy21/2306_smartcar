@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-
+import Function_Library as fl
 
 def getContours(img):
     # numpy와 cv2를 이용하여 반환값 없이 입력받은 이미지 
@@ -88,10 +88,43 @@ def getContours(img):
     return imgContour
     
 
-path = "opencv_tutorial\Resources\shapes.png" 
-img = cv2.imread(path) 
+# path = "opencv_tutorial\Resources\shapes.png" 
+# img = cv2.imread(path) 
+# cv2.imshow("abc",getContours(img))
+# cv2.waitKey(0)
+
+#######################################33
+
+EPOCH = 500000
+
+if __name__ == "__main__":
+    # Exercise Environment Setting
+    env = fl.libCAMERA()
+
+    """ Exercise 1: RGB Color Value Extracting """
+    ############## YOU MUST EDIT ONLY HERE ##############
+    # example = env.file_read("2306_smartcar\Example Image.jpg")
+    # R, G, B = env.extract_rgb(example, print_enable=True)
+    # quit()
+    #####################################################
+
+    # Camera Initial Setting
+    ch0, ch1 = env.initial_setting(capnum=2)
+
+    # Camera Reading..
+    for i in range(EPOCH):
+        _, frame0, _, frame1 = env.camera_read(ch0, ch1)
+
+        img = frame0.copy()
+        imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        imgBlur = cv2.GaussianBlur(imgGray, (7,7),1)
+        imgCanny = cv2.Canny(imgBlur,50,50)
 
 
+        cv2.imshow("abc",getContours(frame0))
+        cv2.imshow("canny",(imgCanny))
+        cv2.waitKey(1000)
+        #####################################################
 
-cv2.imshow("abc",getContours(img))
-cv2.waitKey(0)
+        if env.loop_break():
+            break

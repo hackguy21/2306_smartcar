@@ -2,6 +2,7 @@ import cv2
 import numpy as np 
 
 
+
 def lanefilter(img):
     
     # Image Canny 처리
@@ -13,20 +14,24 @@ def lanefilter(img):
     kernel = np.ones( (5,5), np.uint8  )
 
     # 필터만들기
-    lane_filter = np.zeros((480,640)) # 좌상단을 0,0으로, x,y 로 표시
+    lane_filter = np.zeros_like((imgResize)) # 좌상단을 0,0으로, x,y 로 표시
     pt1 = np.array([[200,100],[0,300],[0,480],[640,480],[640,300],[440,100]])
-    imgf = cv2.fillConvexPoly(lane_filter, pt1, (255,255,255))
-    # cv2.imshow('lanefilter image',lane_filter) # 필터이미지를 창으로 띄움
-    # cv2.waitKey(0)
+    cv2.fillConvexPoly(lane_filter, pt1, (255,255,255))
+    #cv2.imshow('lanefilter image',lane_filter) # 필터이미지를 창으로 띄움
+
+    print(lane_filter.shape)
     
+    # cv2.waitKey(0)
+
     # 만든 필터를 기존 이미지에 마스킹하기
-    imgMasked = np.multiply(imgCanny, lane_filter)
-    #cv2.imshow("imgMasked",imgMasked) # 마스킹된 이미지를 창으로 띄움
+    imgMasked = cv2.bitwise_and(imgResize, lane_filter)
+    #cv2.imshow('a',imgMasked)
+    #cv2.waitKey(0)
     return imgMasked
 
 
-
-
-
-
-
+path = 'opencv_tutorial/Resources/lena.png'
+img = cv2.imread(path)
+masked = lanefilter(img)
+cv2.imshow('a',masked)
+cv2.waitKey(0)
